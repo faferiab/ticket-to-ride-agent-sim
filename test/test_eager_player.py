@@ -59,15 +59,32 @@ class TestingEagerPlayer(unittest.TestCase):
 
   def test_result_get_card(self):
     game = Game(Board([Card(Colour.BLUE, Status.OPEN), 
-                       Card(Colour.RED, Status.OPEN)], []))
+                       Card(Colour.RED, Status.OPEN),
+                       Card(Colour.BLACK, Status.CLOSE),
+                       Card(Colour.BLACK, Status.CLOSE)], []))
     player = EagerRoutePlayer('Player1', None, 
     [Card(Colour.BLUE, Status.OPEN), Card(Colour.BLUE, Status.OPEN)])
     player.result(game, player.action(game))
-    assert len(game.cards) == 1
-    assert len(player.hand) == 3
+    assert len(game.cards) == 2
+    assert len(player.hand) == 4
 
   def test_result_get_route(self):
-    pass
+    game = Game(Board([], [Route('s', 'e', 2, Colour.BLUE)]))
+    player = EagerRoutePlayer('Player1', 2, 
+    [Card(Colour.BLUE, Status.OPEN), Card(Colour.BLUE, Status.OPEN)])
+    player.result(game, player.action(game))
+    assert not len(game.routes)
+    assert len(game.cards)
+    assert player.is_goal()
+
+  def test_result_not_get_route_expensive(self):
+    game = Game(Board([Card(Colour.BLUE, Status.CLOSE), 
+                       Card(Colour.RED, Status.CLOSE)]
+                       , [Route('s', 'e', 2, Colour.BLUE)]))
+    player = EagerRoutePlayer('Player1', 1, 
+    [Card(Colour.BLUE, Status.OPEN), Card(Colour.BLUE, Status.OPEN)])
+    player.result(game, player.action(game))
+    assert not player.is_goal()
   
 if __name__ == '__main__':
     unittest.main()

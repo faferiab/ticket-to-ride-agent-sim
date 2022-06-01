@@ -84,7 +84,7 @@ class Game():
       score += self.points(cost)
     return score
 
-  def points(distance: int):
+  def points(self, distance: int):
     """Return the score of a route"""
     x = [0, 1, 2, 4, 7, 10, 15]
     return x[distance]
