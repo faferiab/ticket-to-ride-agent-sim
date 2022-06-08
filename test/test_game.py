@@ -55,6 +55,30 @@ class TestingGame(unittest.TestCase):
     game.buy_route([card_open1, card_open2], route_buy)
     assert len(game.cards) == 2
     assert not game.routes
-  
+
+  def test_score_path_single_route(self):
+    routes = [Route('S1', 'E1', 2, Colour.ANY),
+      Route('S2', 'E1', 2, Colour.ANY)]
+    game = Game(Board([], []))
+    assert game.score_path(routes) == 2
+
+  def test_score_path_multiple_route(self):
+    routes = [Route('S1', 'E1', 2, Colour.ANY),
+      Route('S2', 'E2', 2, Colour.ANY),
+      Route('S3', 'E2', 2, Colour.ANY)]
+    game = Game(Board([], []))
+    assert game.score_path(routes) == 2
+
+  def test_score_route_simple(self):
+    routes = [Route('S1', 'E1', 5, Colour.ANY)]
+    game = Game(Board([], []))
+    assert game.score_routes(routes) == 15
+
+  def test_score_route_simple(self):
+    routes = [Route('S1', 'E1', 2, Colour.ANY), 
+    Route('S2', 'E2', 2, Colour.ANY)]
+    game = Game(Board([], []))
+    assert game.score_routes(routes) == 4
+
 if __name__ == '__main__':
     unittest.main()

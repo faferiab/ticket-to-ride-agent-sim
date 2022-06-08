@@ -36,3 +36,6 @@ class Route():
       and self.colour() == __o.colour()
       and self.cost() == __o.cost())
     return False
+  
+  def __hash__(self) -> int:
+    return hash((self.__end__, self.__start__, self.__colour__, self.__cost__))

@@ -2,7 +2,8 @@
 from enum import Enum
 from typing import List
 
-from src.model import Card, Colour
+from src.model import Card, Colour, Route
+from src.game import Game
 
 
 class Upgrade(Enum):
@@ -50,3 +51,19 @@ class Player():
       self.cards_freq[colour] -= 1
       if self.cards_freq[colour] == 0:
         self.cards_freq.pop(colour)
+
+
+
+  def action_buy_route(self, game: Game, route: Route):
+    """Buy a train route returning the matching cards in hand"""
+    cost, colour = route.cost(), route.colour()
+    cards: List[Card] = list(
+        filter(lambda card: card.colour() == colour, self.hand))
+    cards.extend(
+        list(filter(lambda card: card.colour() == Colour.ANY, self.hand)))
+    game.buy_route(cards[0:cost], route)
+    for delete_card in cards[0:cost]:
+        self.hand.remove(delete_card)
+        self.remove_card(delete_card.colour())
+    self.__train_counter__ -= cost
+    self.owned_routes.append(route)

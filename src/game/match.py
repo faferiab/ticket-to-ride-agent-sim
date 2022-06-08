@@ -1,6 +1,11 @@
+from typing import List
+from src.game import Game
+from src.player.player import Player
+
+
 class Match():
   """Represent a match of a Game between Players"""
-  def __init__(self, game, players=None, **kwds):
+  def __init__(self, game: Game, players: List[Player]):
     self.game = game
     self.players = players
     self.end_game = False
@@ -11,19 +16,19 @@ class Match():
     game = self.game
     while self.end_game:
       player = self.players[idx % len(self.players)]
-      self.end_game = player.is_goal
+      self.end_game = player.is_goal()
       game = self.player_turn(player, game)
       idx += 1
     self.rounds = idx
     return self.score_game(self.game, self.players), self.rounds
   
-  def score_game(self, game, players):
+  def score_game(self, game: Game, players: List[Player]):
     """Return a dictionary with the score of the game"""
     score = {}
     for player in players:
-      score[player.name] = game.score(player.segments)
+      score[player.name] = game.score(player.owned_routes)
     return score
 
-  def player_turn(Player, game):
+  def player_turn(self, player: Player, game: Game):
     """Execute every player action on game"""
-    return Player.result(game, Player.action(game))
+    return player.result(game, player.action(game))

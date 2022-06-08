@@ -1,5 +1,5 @@
 import random
-from typing import List
+from typing import List, Tuple
 
 from src.model import Board, Card, Colour, Route, Status
 
@@ -72,16 +72,15 @@ class Game():
     """Return a list of discard cards"""
     return self.__cards_by_status__(Status.DISCARD)
 
-  def score(self, routes):
+  def score(self, routes: List[Route]):
     """Return the score of a player"""
-    return self.score_path(routes) + self.score_routes(routes)
+    return self.score_path(routes), self.score_routes(routes)
 
-  def score_routes(self, routes):    
+  def score_routes(self, routes: List[Route]):    
     """Return the score of a player by summing all the routes"""
     score = 0
     for route in routes:
-      begin, start, cost, colour = route
-      score += self.points(cost)
+      score += self.points(route.cost())
     return score
 
   def points(self, distance: int):
@@ -97,7 +96,7 @@ class Game():
         max_number = max(self.search_longest_path(path, station), max_number)
     return max_number
 
-  def group_paths(self, routes):
+  def group_paths(self, routes: List[Route]):
     """Return an array of connected routes"""
     result = []
     station_stack = []
@@ -105,26 +104,26 @@ class Game():
     group = []
     while len(links)>0:
       if len(station_stack) == 0:
-        start, end, *_ = links.pop()
-        station_stack.append(start)
-        station_stack.append(end)
+        route_actual = links.pop()
+        station_stack.append(route_actual.start())
+        station_stack.append(route_actual.end())
         result.append(group.copy())
-        group = [(start, end)]
+        group = [(route_actual.start(), route_actual.end())]
       station = station_stack.pop(0)
-      for link in list(filter(lambda x: x.count(station) > 0, links)):
+      for link in list(filter(lambda x: [x.start(), x.end()].count(station) > 0, links)):
         links.remove(link)
-        group.append(link)
-        start, end = link
+        start, end = link.start(), link.end()
+        group.append((start, end))
         station_stack.append(start if start != station else end)
     result.append(group)
     result.pop(0)
     return result
 
-  def get_origin_stations(self, routes):
+  def get_origin_stations(self, routes: List[Tuple]):
     """Return the origin stations for a routes list"""
     counter={}
     for segment in routes:
-      start, end, *_ = segment
+      start, end = segment
       value = counter.get(start)
       if value == None:
         value = 0

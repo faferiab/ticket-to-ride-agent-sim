@@ -38,20 +38,6 @@ class EagerRoutePlayer(Player):
                 return available_cards.pop(0)
         return None
 
-    def action_buy_route(self, game: Game, route: Route):
-        """Buy a train route returning the matching cards in hand"""
-        cost, colour = route.cost(), route.colour()
-        cards: List[Card] = list(
-            filter(lambda card: card.colour() == colour, self.hand))
-        cards.extend(
-            list(filter(lambda card: card.colour() == Colour.ANY, self.hand)))
-        game.buy_route(cards[0:cost], route)
-        for delete_card in cards[0:cost]:
-            self.hand.remove(delete_card)
-            super().remove_card(delete_card.colour())
-        self.__train_counter__ -= cost
-        self.owned_routes.append(route)
-
     def action_take_card(self, game: Game, cards_freq: Dict, hand: List[Card]):
         card = self.action_get_card(game, cards_freq)
         card = game.deal_close_card() if not card else game.deal_open_card(card)
@@ -69,7 +55,7 @@ class EagerRoutePlayer(Player):
     def result(self, game: Game, action: Tuple):
         action_type, action_data = action
         if action_type == Action.BUY:
-            self.action_buy_route(game, action_data)
+            super().action_buy_route(game, action_data)
         elif action_type == Action.TAKE:
             for _ in range(2):
                 self.action_take_card(game, self.cards_freq, self.hand)

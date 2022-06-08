@@ -60,5 +60,24 @@ class TestingExpensivePlayer(unittest.TestCase):
     card : Card = player.action_get_card(game, card_freq)
     assert card.colour() == Colour.BLACK
 
+  def test_get_action_card(self):
+    game = Game(Board([Card(Colour.BLACK, Status.OPEN), 
+                      Card(Colour.BLUE, Status.CLOSE),
+                      Card(Colour.BLUE, Status.CLOSE)], 
+      [Route('S', 'E', 4, Colour.BLACK)]))
+    player = ExpensiveRoutePlayer('Player1', 1, [Card(Colour.BLACK, Status.OPEN),
+      Card(Colour.BLACK, Status.OPEN), Card(Colour.BLACK, Status.OPEN)])
+    player.result(game, player.action(game))
+    assert not player.is_goal()
+    assert len(player.hand) == 5
+
+  def test_get_action_route(self):
+    game = Game(Board([], [Route('S', 'E', 3, Colour.BLACK)]))
+    player = ExpensiveRoutePlayer('Player1', 3, [Card(Colour.BLACK, Status.OPEN),
+      Card(Colour.BLACK, Status.OPEN), Card(Colour.BLACK, Status.OPEN)])
+    player.result(game, player.action(game))
+    assert player.is_goal()
+    assert not len(player.hand)
+
 if __name__ == '__main__':
     unittest.main()
