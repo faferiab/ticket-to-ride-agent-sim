@@ -65,7 +65,7 @@ class LongestRoutePlayer(Player):
         ROUTE = 0
         AVAILABLE = 2
         reward_list = self.get_reward_route_list(
-            self.get_nearest_routes(game), cards_freq, game)
+            self.get_nearest_routes(game), cards_freq)
         cards_list = [card.colour() for card in game.get_open_cards()]
         route: Route
         for route in [x[ROUTE] for x in reward_list if not x[AVAILABLE]]:

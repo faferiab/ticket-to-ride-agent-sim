@@ -10,6 +10,10 @@ class Game():
     self.cards : List[Card] = board.cards()
     self.routes : List[Route] = board.routes()
     self.board = board
+    if len(self.cards) > 5:
+      for _ in range(5):
+        random.choice(self.cards).set_status(Status.OPEN)
+
 
   def deal_open_card(self, card_selected: Card):
     """Return an open card located in the index position""" 
@@ -97,23 +101,23 @@ class Game():
     return max_number
 
   def group_paths(self, routes: List[Route]):
-    """Return an array of connected routes"""
-    result = []
+    """Return a list of lists each one with a connected routes"""
+    result : List[List[Tuple]] = []
     station_stack = []
     links = routes.copy()
     group = []
     while len(links)>0:
       if len(station_stack) == 0:
-        route_actual = links.pop()
-        station_stack.append(route_actual.start())
-        station_stack.append(route_actual.end())
+        link = links.pop()
+        station_stack.append(link.start())
+        station_stack.append(link.end())
         result.append(group.copy())
-        group = [(route_actual.start(), route_actual.end())]
+        group = [(link.start(), link.end(), link.cost())]
       station = station_stack.pop(0)
       for link in list(filter(lambda x: [x.start(), x.end()].count(station) > 0, links)):
         links.remove(link)
         start, end = link.start(), link.end()
-        group.append((start, end))
+        group.append((start, end, link.cost()))
         station_stack.append(start if start != station else end)
     result.append(group)
     result.pop(0)
@@ -123,7 +127,7 @@ class Game():
     """Return the origin stations for a routes list"""
     counter={}
     for segment in routes:
-      start, end = segment
+      start, end, *_ = segment
       value = counter.get(start)
       if value == None:
         value = 0
@@ -132,24 +136,22 @@ class Game():
       if value == None:
         value = 0
       counter[end] = value + 1
-    origins = list(filter(lambda x: counter.get(x) == 1, counter.keys()))
-    if len(origins) < 1:
+    origins : List[Tuple] = list(filter(lambda x: counter.get(x) == 1, counter.keys()))
+    if not len(origins):
       min_size = (min(counter.values()))
       origins = list(filter(lambda x: counter.get(x) == min_size, counter.keys()))
       origins = [origins.pop()]
     return origins
 
-  def search_longest_path(self, routes, station, count=0, max_number=0):
+  def search_longest_path(self, routes: List[Tuple], station: Tuple, count=0, max_number=0):
     """Return the longest path for a segment list"""
-    match_routes = list(filter(lambda x: x.count(station) > 0, routes))
-    if len(match_routes) < 1:
-      #print(max_number, count)
+    match_routes = list(filter(lambda x: (x[0], x[1]).count(station), routes))
+    if not len(match_routes):
       return max(max_number, count)
     for node in match_routes:
       new_routes = routes.copy()
       new_routes.remove(node)
-      start, end = node
+      start, end, cost = node
       new_station = start if start != station else end
-      #print(count, ':', new_routes, node, new_station)
-      max_number = self.search_longest_path(new_routes, new_station, count + 1, max_number)
+      max_number = self.search_longest_path(new_routes, new_station, count + cost, max_number)
     return max_number

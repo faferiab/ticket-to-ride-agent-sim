@@ -3,7 +3,7 @@ from .enums import Colour, Status
 
 class Card():
   """Represent a game card"""
-  def __init__(self, colour, status):
+  def __init__(self, colour, status = Status.CLOSE):
     self.__colour__ : Colour = colour
     self.__status__ : Status = status
 

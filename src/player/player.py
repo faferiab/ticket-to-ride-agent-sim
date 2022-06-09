@@ -16,7 +16,7 @@ class Player():
   def __init__(self, name: str, train_counter: int, initial: List[Card]):
     self.name = name
     self.__train_counter__ = 0 if not train_counter else train_counter
-    self.hand = initial
+    self.hand = [] if not initial else initial
     # V,K = Colour: Qty
     self.cards_freq = {}
     self.owned_routes = []
@@ -52,13 +52,11 @@ class Player():
       if self.cards_freq[colour] == 0:
         self.cards_freq.pop(colour)
 
-
-
   def action_buy_route(self, game: Game, route: Route):
     """Buy a train route returning the matching cards in hand"""
     cost, colour = route.cost(), route.colour()
     cards: List[Card] = list(
-        filter(lambda card: card.colour() == colour, self.hand))
+        filter(lambda card: (card.colour() == colour or colour == Colour.ANY), self.hand))
     cards.extend(
         list(filter(lambda card: card.colour() == Colour.ANY, self.hand)))
     game.buy_route(cards[0:cost], route)

@@ -14,10 +14,11 @@ class Match():
   def run_game(self):
     idx = 0
     game = self.game
-    while self.end_game:
+    while not self.end_game:
       player = self.players[idx % len(self.players)]
+      action = player.action(game)
+      player.result(game, action)
       self.end_game = player.is_goal()
-      game = self.player_turn(player, game)
       idx += 1
     self.rounds = idx
     return self.score_game(self.game, self.players), self.rounds
