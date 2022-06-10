@@ -55,11 +55,20 @@ class Player():
   def action_buy_route(self, game: Game, route: Route):
     """Buy a train route returning the matching cards in hand"""
     cost, colour = route.cost(), route.colour()
-    cards: List[Card] = list(
-        filter(lambda card: (card.colour() == colour or colour == Colour.ANY), self.hand))
-    cards.extend(
-        list(filter(lambda card: card.colour() == Colour.ANY, self.hand)))
-    game.buy_route(cards[0:cost], route)
+    if colour == Colour.ANY:
+      temp_cards_freq = self.cards_freq.copy()
+      temp_cards_freq.update({Colour.ANY: -1})
+      filter_cards = lambda colour: (temp_cards_freq[colour] == max(temp_cards_freq.values()) 
+        and colour != Colour.ANY)
+      colour_filter = list(filter(filter_cards, temp_cards_freq.keys()))
+      colour = colour_filter.pop() if len(colour_filter) else None
+    cards: List[Card] = list(filter(lambda card: (card.colour() == colour), self.hand))
+    cards.extend(list(filter(lambda card: card.colour() == Colour.ANY, self.hand)))
+    try:
+      game.buy_route(cards[0:cost], route)
+    except:
+      print(self.name, [x.colour() for x in self.hand])
+      raise Exception("Invalid cards")
     for delete_card in cards[0:cost]:
         self.hand.remove(delete_card)
         self.remove_card(delete_card.colour())
