@@ -27,7 +27,7 @@ class Match():
       self.end_game = player.is_goal()
       idx += 1
     self.rounds = idx
-    return self.score_game(self.game, self.players)
+    return self.score_game(self.players), self.rounds
   
   def score_game(self, players: List[Player]):
     """Return a dictionary with the score of the game"""

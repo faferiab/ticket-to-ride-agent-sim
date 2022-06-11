@@ -62,6 +62,7 @@ class TestingGame(unittest.TestCase):
     LongestRoutePlayer('player3', 45, None)]
     match = Match(game, players)
     dict_player, count_rounds = match.run_game()
+    print((dict_player, count_rounds))
     assert count_rounds
     assert dict_player
 
