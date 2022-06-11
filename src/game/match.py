@@ -26,18 +26,18 @@ class Match():
         raise Exception('No funca')
       self.end_game = player.is_goal()
       idx += 1
-      #print(player.name, action[0], '**',player.__train_counter__, '**',
-      #  len([x.status() for x in game.cards if x.status() == Status.OPEN]),
-      #  len([x.status() for x in game.cards if x.status() == Status.CLOSE]),
-      #  len([x.status() for x in game.cards if x.status() == Status.DISCARD]))
     self.rounds = idx
-    return self.score_game(self.game, self.players), self.rounds
+    return self.score_game(self.game, self.players)
   
-  def score_game(self, game: Game, players: List[Player]):
+  def score_game(self, players: List[Player]):
     """Return a dictionary with the score of the game"""
     score = {}
+    path_bonus = (None, 0)
     for player in players:
-      score[player.name] = self.score(player.owned_routes)
+      score_path, score[player.name] = self.score(player.owned_routes)
+      if path_bonus[1] < score_path:
+        path_bonus = (player.name, score_path)
+    score[path_bonus[0]] += 10
     return score
 
   def player_turn(self, player: Player, game: Game):
