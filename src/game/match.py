@@ -19,11 +19,7 @@ class Match():
     while not self.end_game:
       player = self.players[idx % len(self.players)]
       action = player.action(game)
-      try:
-        player.result(game, action)
-      except:
-        print([x.status() for x in game.cards])
-        raise Exception('No funca')
+      player.result(game, action)
       self.end_game = player.is_goal()
       idx += 1
     self.rounds = idx
