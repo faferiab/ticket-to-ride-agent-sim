@@ -58,8 +58,8 @@ class TestingGame(unittest.TestCase):
     routes = ListRoutes
     cards = ListCards
     game = Game(Board(cards, routes))
-    players = [EagerRoutePlayer('player1', 4, None), ExpensiveRoutePlayer('player2', 4, None),
-    LongestRoutePlayer('player3', 4, None)]
+    players = [EagerRoutePlayer('player1', 45, None), ExpensiveRoutePlayer('player2', 45, None),
+    LongestRoutePlayer('player3', 45, None)]
     match = Match(game, players)
     dict_player, count_rounds = match.run_game()
     assert count_rounds

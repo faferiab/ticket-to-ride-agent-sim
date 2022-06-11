@@ -1,5 +1,6 @@
 from typing import List, Tuple
 from src.game import Game
+from src.model.enums import Action, Status
 from src.model.route import Route
 from src.player.player import Player
 
@@ -18,9 +19,17 @@ class Match():
     while not self.end_game:
       player = self.players[idx % len(self.players)]
       action = player.action(game)
-      player.result(game, action)
+      try:
+        player.result(game, action)
+      except:
+        print([x.status() for x in game.cards])
+        raise Exception('No funca')
       self.end_game = player.is_goal()
       idx += 1
+      #print(player.name, action[0], '**',player.__train_counter__, '**',
+      #  len([x.status() for x in game.cards if x.status() == Status.OPEN]),
+      #  len([x.status() for x in game.cards if x.status() == Status.CLOSE]),
+      #  len([x.status() for x in game.cards if x.status() == Status.DISCARD]))
     self.rounds = idx
     return self.score_game(self.game, self.players), self.rounds
   

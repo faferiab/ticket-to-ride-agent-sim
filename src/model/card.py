@@ -15,9 +15,9 @@ class Card():
     """Card status"""
     return self.__status__
 
-  def set_status(self, value):
+  def set_status(self, status: Status):
     """New card status"""
-    self.__status__ = value
+    self.__status__ = status
 
   def __str__(self) -> str:
       return "(" + str(self.__colour__) + ", " + str(self.__status__) + ")"

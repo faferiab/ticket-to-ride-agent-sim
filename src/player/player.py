@@ -2,7 +2,7 @@
 from enum import Enum
 from typing import List
 
-from src.model import Card, Colour, Route
+from src.model import Card, Colour, Route, Status
 from src.game import Game
 
 
@@ -33,9 +33,11 @@ class Player():
     raise NotImplementedError
 
   def is_goal(self):
-    return self.__train_counter__ == 0
+    return 0 <= self.__train_counter__ < 4
 
   def add_card(self, colour: Colour):
+    for card in self.hand:
+      card.set_status(Status.OPEN)
     self.__card_freq_update__(colour, Upgrade.ADD)
 
   def remove_card(self, colour: Colour):
